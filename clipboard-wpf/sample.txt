@@ -1,0 +1,7 @@
+Copy the line of misencoded text surrounded by quotes on the next line : 
+"Un kyste dÚveloppÚ au niveau de la lŞvre antÚrieure du rein a un diamŞtre transversal de"
+
+
+//THIS TEXT SHOULD NOT BE COPIED
+fixed sample with corrected characters (done manually) :
+"Un kyste développé au niveau de la lèvre antérieure du rein a un diamètre transversal de"

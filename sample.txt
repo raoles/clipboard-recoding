@@ -1,0 +1,5 @@
+copy this sample with misencoded characters : 
+"Un kyste dÚveloppÚ au niveau de la lŞvre antÚrieure du rein a un diamŞtre transversal de"
+
+compare the result with this fixed sample with corrected characters (done manually) :
+"Un kyste développé au niveau de la lèvre antérieure du rein a un diamètre transversal de"
