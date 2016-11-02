@@ -50,6 +50,9 @@ namespace clipboard_wpf
             IDataObject clipboardData = Clipboard.GetDataObject();
             string oemTextFormatName = DataFormats.OemText;
             object oemTextFormatObject = clipboardData.GetData(oemTextFormatName);
+
+            // the corrupted text copied to clipboard is "Un kyste dÚveloppÚ au niveau de la lÞvre antÚrieure du rein a un diamÞtre transversal de" from the sample.txt
+            //oemTextFromClipboard's debug local value is "Un kyste développé au niveau de la lèvre antérieure du rein a un diamètre transversal de", the text correctly decoded
             string oemTextFromClipboard = oemTextFormatObject.ToString();
 
             Debug.WriteLine("");
