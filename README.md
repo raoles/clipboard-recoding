@@ -8,9 +8,6 @@ Copying Iso-8859-1 encoded text with corrupted characters to the clipboard then 
 corrupted text copied to clipboard : *"Un kyste dÚveloppÚ au niveau de la lÞvre antÚrieure du rein a un diamÞtre transversal de"*  
 clean text coming back : *"Un kyste développé au niveau de la lèvre antérieure du rein a un diamètre transversal de"*  
 
-The corrupted characters are from the iso-8859-1 8th bit range, from 128 to 255 code number.  
-The characters are listed in this [JSON file](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/misencoded-characters.json).
-
 The explanation of the problem is longer than it should be because it's my first project about encodings and I'm looking for input from other developers.  
 
 ## Problem context
@@ -44,12 +41,17 @@ I dived deep in Recode's documentation but the experiment was not successful.
 
 ## My first solution
 
+So far I know this:  
+The text is encoded as iso-8859-1.  
+The corrupted characters are from the iso-8859-1 8th bit range, from 128 to 255 code number.  
+I listed them in this [JSON file](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/misencoded-characters.json).
+
 At this point, I'm know enough about encodings to build a solution (7 bit encoding scheme, 8 bit encoding scheme, US_ASCII, ISO 646 and national variants, ISO-8859-X standards, Unicode, UCS-2, UTF-8 and its retro compatibility, .Net UTF-16 string encoding).  
 I decided to make a C# WPF application that takes the corrupted text as input, corrects it via the [misencoded characters table](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/misencoded-characters.json) then outputs the corrected text.  
 
 
 ## My strange discovery
-While working on the WPF app, I was exploring the Windows clipboard functions (the doctor will paste the garbled text in a text field in my app).  
+While working on the WPF app, I was exploring the Windows clipboard functions.  
 The OemText data format from the clipboard correctly recode the corrupted text, the misencoded characters are displayed correctly.  
 So this means that there's a way to recode directly the corrupted text to a string, which is easier and more maintenable than transforming the text via a misencoded characters table.  
 [See the code manipulating the clipboard and OEMText data format below](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/MainWindow.xaml.cs#L50)  
