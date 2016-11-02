@@ -39,7 +39,7 @@ I played a lot with [Recode FSF](https://directory.fsf.org/wiki/Recode), a tool 
 I tried recoding the text to all encodings offered by Recode and used the "-k BEFORE:AFTER" flag on the misencoded characters.
 I dived deep in Recode's documentation but the experiment was not successful.
 
-At this point, I'm informed enough (I grasp it enough to be sure of what I'm doing) about 7 bit encoding scheme, 8 bit encoding scheme, US_ASCII, ISO 646 and national variants, ISO-8859-X standards, Unicode, UCS-2, UTF-8 and its retro compatibility, C# string encoding (16 bits).
+At this point, I'm informed enough (I grasp it enough to be sure of what I'm doing) about 7 bit encoding scheme, 8 bit encoding scheme, US_ASCII, ISO 646 and national variants, ISO-8859-X standards, Unicode, UCS-2, UTF-8 and its retro compatibility, .Net string encoding (16 bits).
 I decided to make a C# WPF application that takes the corrupted text as input, corrects it via the [misencoded characters table]() then outputs the corrected text.
 
 
