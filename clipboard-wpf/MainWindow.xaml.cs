@@ -28,7 +28,7 @@ namespace clipboard_wpf
 
         // the sample.txt file included in project contains a (fictional) sample from a medical laboratory result (x-ray exam)
         // the sample.txt file contents are encoded using the ISO-8859-1 encoding
-        // the sample text contains misencoded characters are from the 8th bit range, i.e. from the 128 code number to the 255 code number
+        // the sample text contains misencoded characters when from the 8th bit range, i.e. from the 128 code number to the 255 code number
         // the misencoded-characters.json file (included in project and encoded in UTF-8) lists those misencoded characters
 
         public MainWindow()
@@ -46,7 +46,7 @@ namespace clipboard_wpf
                 Also : in the Debug Locals tab, you can check the string values of the "oemTextFormatObject" and "oemTextFromClipboard" variables through the Text visualizer (not the html or xml visualizer)
                 the values contain the same sample text but the misencoded characters are recoded correctly to a string 
              */
-            
+
             IDataObject clipboardData = Clipboard.GetDataObject();
             string oemTextFormatName = DataFormats.OemText;
             object oemTextFormatObject = clipboardData.GetData(oemTextFormatName);
@@ -61,27 +61,52 @@ namespace clipboard_wpf
             Debug.WriteLine("");
 
 
-            //The following tests do not yield the same result, i.e. the misencoded characters are still wrongly interpreted
+            //The following tests fail to identify the unknown code page used by OemText
 
-            // the iso-8859-1 encoded text "été" for testing purpose, where the letter "é" is misencoded as the 218 code number instead of the iso 8859-1 code number 233
-            byte[] wronglyEncodedTextBytes = new byte[] { 218, 116, 218 };
+            // the iso-8859-1 text "été", where the letter "é" is misencoded as the 218 code number instead of the iso 8859-1 code number 233 
+            // and the letter "t" is correctly encoded by its iso-8859-1 code number
+            byte[] bytesFromUnknownEncodingText = new byte[] { 218, 116, 218 };
 
             //try decoding the byte array using the console output oem encoding : failing
-            Encoding outputEncoding = Console.OutputEncoding;
-            string correctTextOutputEncoding = outputEncoding.GetString(wronglyEncodedTextBytes);
+            Encoding consoleOutputEncoding = Console.OutputEncoding;
+            string unknownEncodingBytesDecodedByConsoleEncoding = consoleOutputEncoding.GetString(bytesFromUnknownEncodingText);
 
             //try decoding the byte array using the locale oem code page :  failing
-            Encoding encodingOEM = Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
-            string encodingOEMCorectedTextFromBytes = encodingOEM.GetString(wronglyEncodedTextBytes);
+            Encoding currentLocaleOEMCodePage = Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
+            string unknownEncodingBytesDecodedByLocaleOEMCodePage = currentLocaleOEMCodePage.GetString(bytesFromUnknownEncodingText);
 
-            //try decoding the byte array with all the .net encodings : failing
-            EncodingInfo[] encodingsInfos = Encoding.GetEncodings();
-            ArrayList resultingStringsFromBytes = new ArrayList(encodingsInfos.Length);
-            foreach (EncodingInfo encodingInfo in encodingsInfos)
+
+            //collect all the .NET encodings in an array
+            EncodingInfo[] encodingInfos = Encoding.GetEncodings();
+            Encoding[] allEncodings = new Encoding[encodingInfos.Length];
+            for (int i = 0; i < encodingInfos.Length; i++)
             {
-                Encoding currentEncoding = encodingInfo.GetEncoding();
-                string encodedTextFromBytes = currentEncoding.GetString(wronglyEncodedTextBytes);
-                resultingStringsFromBytes.Add(encodedTextFromBytes);
+                allEncodings[i] = encodingInfos[i].GetEncoding();
+            }
+
+            //try decoding the byte array with all .NET encodings : fail
+            List<String> resultingStringsFromDecoding = new List<String>(allEncodings.Length);
+            foreach (Encoding encoding in allEncodings)
+            {
+                string encodedBytes = encoding.GetString(bytesFromUnknownEncodingText);
+                resultingStringsFromDecoding.Add(encodedBytes);
+
+            }
+
+            //try encoding the string with all .NET encodings : fail
+            string correctStringToEncode = "été";
+            List<byte[]> resultingBytesFromStringEncodedByAllEncodings = new List<byte[]>(allEncodings.Length);
+            byte EacuteCodeNumberFromUnknownEncoding = 218;
+            List<byte[]> resultingBytesMatchingEacuteWrongByteCodeNumber = new List<byte[]>();
+
+            foreach (Encoding encoding in allEncodings)
+            {
+                byte[] correctStringEncoded = encoding.GetBytes(correctStringToEncode);
+                resultingBytesFromStringEncodedByAllEncodings.Add(correctStringEncoded);
+                if (correctStringEncoded[0] == EacuteCodeNumberFromUnknownEncoding)
+                {
+                    resultingBytesMatchingEacuteWrongByteCodeNumber.Add(correctStringEncoded);
+                }
 
             }
 
