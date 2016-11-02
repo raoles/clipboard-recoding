@@ -61,29 +61,29 @@ namespace clipboard_wpf
             Debug.WriteLine("");
 
 
-            ////The following tests do not yield the same result, i.e. the misencoded characters are still wrongly interpreted
-            
-            //// the iso-8859-1 encoded text "été" for testing purpose, where the letter "é" is misencoded as the 218 code number instead of the iso 8859-1 code number 233
-            //byte[] wronglyEncodedTextBytes = new byte[] { 218, 116, 218 }; 
+            //The following tests do not yield the same result, i.e. the misencoded characters are still wrongly interpreted
 
-            ////try decoding the byte array using the console output oem encoding : failing
-            //Encoding outputEncoding = Console.OutputEncoding;
-            //string correctTextOutputEncoding = outputEncoding.GetString(wronglyEncodedTextBytes);
+            // the iso-8859-1 encoded text "été" for testing purpose, where the letter "é" is misencoded as the 218 code number instead of the iso 8859-1 code number 233
+            byte[] wronglyEncodedTextBytes = new byte[] { 218, 116, 218 };
 
-            ////try decoding the byte array using the locale oem code page :  failing
-            //Encoding encodingOEM = Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
-            //string encodingOEMCorectedTextFromBytes = encodingOEM.GetString(wronglyEncodedTextBytes);
+            //try decoding the byte array using the console output oem encoding : failing
+            Encoding outputEncoding = Console.OutputEncoding;
+            string correctTextOutputEncoding = outputEncoding.GetString(wronglyEncodedTextBytes);
 
-            ////try decoding the byte array with all the .net encodings : failing
-            //EncodingInfo[] encodingsInfos = Encoding.GetEncodings();
-            //ArrayList resultingStringsFromBytes = new ArrayList(encodingsInfos.Length);
-            //foreach (EncodingInfo encodingInfo in encodingsInfos)
-            //{
-            //    Encoding currentEncoding = encodingInfo.GetEncoding();
-            //    string encodedTextFromBytes = currentEncoding.GetString(wronglyEncodedTextBytes);
-            //    resultingStringsFromBytes.Add(encodedTextFromBytes);
+            //try decoding the byte array using the locale oem code page :  failing
+            Encoding encodingOEM = Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
+            string encodingOEMCorectedTextFromBytes = encodingOEM.GetString(wronglyEncodedTextBytes);
 
-            //}
+            //try decoding the byte array with all the .net encodings : failing
+            EncodingInfo[] encodingsInfos = Encoding.GetEncodings();
+            ArrayList resultingStringsFromBytes = new ArrayList(encodingsInfos.Length);
+            foreach (EncodingInfo encodingInfo in encodingsInfos)
+            {
+                Encoding currentEncoding = encodingInfo.GetEncoding();
+                string encodedTextFromBytes = currentEncoding.GetString(wronglyEncodedTextBytes);
+                resultingStringsFromBytes.Add(encodedTextFromBytes);
+
+            }
 
             InitializeComponent();
         }
