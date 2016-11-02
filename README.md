@@ -1,5 +1,6 @@
 
 ## Intro
+
 This project demonstrates a strange behaviour I observed from the Windows clipboard.  
 Copying Iso-8859-1 encoded text with corrupted characters to the clipboard then retrieving it using the OemText data format, the text comes back as a correctly decoded string without the previous corrupted characters.  
 
@@ -14,7 +15,6 @@ The explanation of the problem is longer than it should be because it's my first
 
 ## Problem context
 
-
 I'm making a c# WPF desktop application for my doctor because of an issue he has with results from a medical laboratory.  
 My doctor and the medical laboratory both have the same medical emailing software installed on Windows to communicate with each other.  
 The laboratory sends the medical result (requested by my doctor) to my doctor through the emailing software.  
@@ -27,7 +27,7 @@ I decided to make my doctor a desktop app to fix the text's misencoded character
 My intent was and still is to learn about encodings and realizing a real-world small project.  
 I'm not interested in contacting the sender laboratory, I want to find a programming solution.  
 
-## What i did
+## My first steps to find the original encoding
 
 I extracted a sample of corrupted text from the medical emailing software (cleared of all patient information of course).  
 I encoded the sample text as iso-8859-1, the same encoding used by the emailing software.  
@@ -41,6 +41,8 @@ I read those SO's posts [[1](http://stackoverflow.com/questions/132318/how-do-i-
 I played a lot with [Recode FSF](https://directory.fsf.org/wiki/Recode), a tool similar to iconv.  
 I tried recoding the text to all encodings offered by Recode and used the "-k BEFORE:AFTER" flag on the misencoded characters.
 I dived deep in Recode's documentation but the experiment was not successful.  
+
+## My first solution
 
 At this point, I'm know enough about encodings to build a solution (7 bit encoding scheme, 8 bit encoding scheme, US_ASCII, ISO 646 and national variants, ISO-8859-X standards, Unicode, UCS-2, UTF-8 and its retro compatibility, .Net UTF-16 string encoding).  
 I decided to make a C# WPF application that takes the corrupted text as input, corrects it via the [misencoded characters table](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/misencoded-characters.json) then outputs the corrected text.  
@@ -66,13 +68,16 @@ string oemTextFromClipboard = oemTextFormatObject.ToString();
 
 
 ## How to reproduce my discovery
+
 Downlaod the project then read this [commented code](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/MainWindow.xaml.cs#L37) to reproduce my discovery in 2 steps  
 
-## What I want to do
+## My second solution (after my discovery)
+
 First, I want to understand why the OEMDataFormat understands correctly the corrupted text and what code page it uses to achieve that.  
 Then I want to use its mechanism or code page to correct the corrupted text directly, instead of using an intermediate misencoded characters table.  
 
 ## What i tried already to find the origin of the OEMText data format correct decoding
+
 * Some [c# tests](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/MainWindow.xaml.cs#L64)
 * Comparing my misencoded characters table to all [Windows OEM code pages](http://www.aivosto.com/vbtips/charsets-codepages-dos.html#codepage863) : it's a failure, wrong bytes in the sample text do not correspond to the misencoded characters in the OEM code pages.  
 Example : the wrong 218 byte that represents "é" in my corrupted text (but should be the code number 233 for iso-8859-1) is never the code number for the character "é" in the OEM code pages.  
@@ -84,7 +89,8 @@ Example : the wrong 218 byte that represents "é" in my corrupted text (but shou
 4. [UnsafeNativeMethods.OleGetClipboard(ref IComDataObject data)](https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/UnsafeNativeMethods.cs,e953edbf1bc55d0c)
 
 ## What I'm doing next
-Posting this to help forums  
+
+Posting this explanation to help forums  
 Exploring the Windows Ole And COM subjects (why? because of the 4th bullet from my source code exploring : "OleGetClipboard"), but I don't know if that's the right direction.  
 
 
