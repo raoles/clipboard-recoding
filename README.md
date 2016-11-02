@@ -6,7 +6,10 @@ Copying Iso-8859-1 encoded text with corrupted characters to the clipboard then 
 **Example :**  
 corrupted text copied to clipboard : *"Un kyste dÚveloppÚ au niveau de la lÞvre antÚrieure du rein a un diamÞtre transversal de"*  
 clean text coming back : *"Un kyste développé au niveau de la lèvre antérieure du rein a un diamètre transversal de"*  
-  
+
+The corrupted characters are from the iso-8859-1 8th bit range, from 128 to 255 code number.  
+The characters are listed in this [JSON file](https://github.com/raoles/clipboard-recoding/blob/master/clipboard-wpf/misencoded-characters.json).
+
 The explanation of the problem is longer than it should be because it's my first project about encodings and I'm looking for input from other developers.  
 
 ## Problem context
@@ -81,7 +84,7 @@ Example : the wrong 218 byte that represents "é" in my corrupted text (but shou
 4. [UnsafeNativeMethods.OleGetClipboard(ref IComDataObject data)](https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/UnsafeNativeMethods.cs,e953edbf1bc55d0c)
 
 ## What I'm doing next
-Posting this to help forums 
+Posting this to help forums  
 Exploring the Windows Ole And COM subjects (why? because of the 4th bullet from my source code exploring : "OleGetClipboard"), but I don't know if that's the right direction.  
 
 
